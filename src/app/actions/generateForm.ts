@@ -3,12 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { saveForm } from "./mutateForm";
-import { v4 as uuidv4 } from "uuid";
-
-import { GoogleGenerativeAI } from "@google/generative-ai";
-const API_KEY = process.env.GEMINI_API_KEY || "";
-const genAI = new GoogleGenerativeAI(API_KEY);
-const model = genAI.getGenerativeModel({ model: "gemini-pro" });
 
 export async function generateForm(
   prevState: {
@@ -30,36 +24,77 @@ export async function generateForm(
     };
   }
 
+  if (!process.env.OPENAI_API_KEY) {
+    return {
+      message: "No OpenAI API key found",
+    };
+  }
+
   const data = parse.data;
-  console.log(data);
+  const promptExplanation =
+    "Based on the description, generate a survey object with 3 fields: name(string) for the form, description(string) of the form and a questions array where every element has 2 fields: text and the fieldType and fieldType can be of these options RadioGroup, Select, Input, Textarea, Switch; and return it in json format. For RadioGroup, and Select types also return fieldOptions array with text and value fields. For example, for RadioGroup, and Select types, the field options array can be [{text: 'Yes', value: 'yes'}, {text: 'No', value: 'no'}] and for Input, Textarea, and Switch types, the field options array can be empty. For example, for Input, Textarea, and Switch types, the field options array can be []";
 
   try {
-    console.log("indside");
-    const prompt = `${data.description} Based on the description, generate a survey object with 3 fields: name(string) for the form, description(string) of the form and a questions array where every element has 2 fields: text and the fieldType and fieldType can be of these options RadioGroup, Select, Input, Textarea, Switch; and return it in json format. For RadioGroup, and Select types also return fieldOptions array with text and value fields. And more importantly, questions should be only 2 in number. For example, for RadioGroup, and Select types, the field options array can be [{text: 'Yes', value: 'yes'}, {text: 'No', value: 'no'}] and for Input, Textarea, and Switch types, the field options array can be empty. For example, for Input, Textarea, and Switch types, the field options array can be []`;
-    const result = await model.generateContent(prompt);
-    const response = await result.response;
-    const text = response.text();
-    const jsonString = text.replace(/^```json\s*([\s\S]*)\s*```$/g, "$1");
-
-    const responseObject = JSON.parse(jsonString);
-    console.log(responseObject, "dsf");
-
-    const dbFormId = await saveForm({
-      user_prompt: data.description,
-      name: responseObject.name,
-      description: responseObject.description,
-      questions: responseObject.questions,
+    const response = await fetch("https://api.openai.com/v1/chat/completions", {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${process.env.OPENAI_API_KEY ?? ""}`,
+      },
+      method: "POST",
+      body: JSON.stringify({
+        model: "gpt-3.5-turbo",
+        messages: [
+          {
+            role: "system",
+            content: `${data.description} ${promptExplanation}`,
+          },
+        ],
+      }),
     });
 
-    console.log("getting form id", dbFormId);
+    if (!response.ok) {
+      console.error("API response not OK:", response.status, response.statusText);
+      return {
+        message: "Failed to generate form",
+      };
+    }
+
+    const json = await response.json();
+
+    // Debugging: Log the entire JSON response
+    console.log("API Response JSON:", json);
+
+    // Check if choices and the expected properties exist
+    if (!json.choices || json.choices.length === 0 || !json.choices[0].message || !json.choices[0].message.content) {
+      console.error("Invalid API response structure:", json);
+      return {
+        message: "Invalid API response structure",
+      };
+    }
+
+    let responseObj;
+    try {
+      responseObj = JSON.parse(json.choices[0].message.content);
+    } catch (e) {
+      console.error("Failed to parse API response content:", e);
+      return {
+        message: "Failed to parse form data",
+      };
+    }
+
+    const dbFormId = await saveForm({
+      name: responseObj.name,
+      description: responseObj.description,
+      questions: responseObj.questions,
+    });
 
     revalidatePath("/");
     return {
       message: "success",
       data: { formId: dbFormId },
     };
-  } catch (err) {
-    console.log(err);
+  } catch (e) {
+    console.error("Error in generateForm function:", e);
     return {
       message: "Failed to create form",
     };

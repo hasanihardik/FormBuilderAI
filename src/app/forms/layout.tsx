@@ -1,15 +1,13 @@
-import React from "react";
-import { Toaster } from "@/components/ui/toaster";
+import React from 'react'
 
-const FormEditLayout = ({ children }: { children: React.ReactNode }) => {
+const FormEditLayout = ({
+  children
+}: {
+  children: React.ReactNode
+}) => {
   return (
-    <>
-      <main className="flex min-h-screen flex-col items-center justify-between p-24">
-        {children}
-      </main>
-      <Toaster />
-    </>
-  );
-};
+    <main className='flex min-h-screen flex-col items-center justify-between p-24'>{children}</main>
+  )
+}
 
-export default FormEditLayout;
+export default FormEditLayout

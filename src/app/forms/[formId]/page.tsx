@@ -1,37 +1,39 @@
-import React from "react";
-import { db } from "@/db";
-import { forms } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import Form from "../Form";
+import React from 'react'
+import { db } from '@/db';
+import { forms } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { auth } from '@/auth';
+import Form from '../Form';
 
-const page = async ({
-  params,
-}: {
+
+const page = async ({ params }: {
   params: {
-    formId: string;
-  };
+    formId: string
+  }
 }) => {
   const formId = params.formId;
 
   if (!formId) {
-    return <div>Form not found</div>;
-  }
+    return <div>Form not found</div>
+  };
 
   const form = await db.query.forms.findFirst({
-    where: eq(forms.formID, formId),
+    where: eq(forms.id, parseInt(formId)),
     with: {
       questions: {
         with: {
-          fieldOptions: true,
-        },
-      },
-    },
-  });
+          fieldOptions: true
+        }
+      }
+    }
+  })
 
   if (!form) {
-    return <div>Form not found</div>;
+    return <div>Form not found</div>
   }
 
-  return <Form form={form} />;
-};
+  return (
+    <Form form={form} />
+  )
+}
 export default page;

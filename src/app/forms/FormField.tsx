@@ -1,50 +1,35 @@
-import React, { ChangeEvent } from "react";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import React, { ChangeEvent } from 'react'
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select";
-import { FormControl, FormLabel } from "@/components/ui/form";
-import { Switch } from "@/components/ui/switch";
-import { Textarea } from "@/components/ui/textarea";
-import { Input } from "@/components/ui/input";
-import { QuestionSelectModel } from "@/types/form-types";
-import { FieldOptionSelectModel } from "@/types/form-types";
-import { Label } from "@/components/ui/label";
+} from "@/components/ui/select"
+import { FormControl, FormLabel } from '@/components/ui/form';
+import { Switch } from '@/components/ui/switch';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { QuestionSelectModel } from '@/types/form-types';
+import { FieldOptionSelectModel } from '@/types/form-types';
+import { Label } from '@/components/ui/label';
 
 type Props = {
   element: QuestionSelectModel & {
-    fieldOptions: Array<FieldOptionSelectModel>;
-  };
-  value: string;
-  onChange: (value?: string | ChangeEvent<HTMLInputElement>) => void;
-};
+    fieldOptions: Array<FieldOptionSelectModel>
+  }
+  value: string,
+  onChange: (value?: string | ChangeEvent<HTMLInputElement>) => void
+}
 
 const FormField = ({ element, value, onChange }: Props) => {
   if (!element) return null;
 
   const components = {
     Input: () => <Input type="text" onChange={onChange} />,
-
-    Switch: () => (
-      <Switch
-        onCheckedChange={(checked: boolean) => {
-          onChange(checked ? "true" : "false");
-        }}
-      />
-    ),
-
-    Textarea: () => (
-      <Textarea
-        onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-          onChange(e.target.value)
-        }
-      />
-    ),
-
+    Switch: () => <Switch />,
+    Textarea: () => <Textarea />,
     Select: () => (
       <Select onValueChange={onChange}>
         <SelectTrigger>
@@ -52,12 +37,7 @@ const FormField = ({ element, value, onChange }: Props) => {
         </SelectTrigger>
         <SelectContent>
           {element.fieldOptions.map((option, index) => (
-            <SelectItem
-              key={`${option.text} ${option.value}`}
-              value={`answerId_${option.id}`}
-            >
-              {option.text}
-            </SelectItem>
+            <SelectItem key={`${option.text} ${option.value}`} value={`answerId_${option.id}`}>{option.text}</SelectItem>
           ))}
         </SelectContent>
       </Select>
@@ -65,28 +45,18 @@ const FormField = ({ element, value, onChange }: Props) => {
     RadioGroup: () => (
       <RadioGroup onValueChange={onChange}>
         {element.fieldOptions.map((option, index) => (
-          <div
-            key={`${option.text} ${option.value}`}
-            className="flex items-center space-x-2"
-          >
+          <div key={`${option.text} ${option.value}`} className='flex items-center space-x-2'>
             <FormControl>
-              <RadioGroupItem
-                value={`answerId_${option.id}`}
-                id={option?.value?.toString() || `answerId_${option.id}`}
-              >
-                {option.text}
-              </RadioGroupItem>
+              <RadioGroupItem value={`answerId_${option.id}`} id={option?.value?.toString() || `answerId_${option.id}`}>{option.text}</RadioGroupItem>
             </FormControl>
-            <Label className="text-base">{option.text}</Label>
+            <Label className='text-base'>{option.text}</Label>
           </div>
         ))}
       </RadioGroup>
-    ),
-  };
+    )
+  }
 
-  return element.fieldType && components[element.fieldType]
-    ? components[element.fieldType]()
-    : null;
-};
+  return element.fieldType && components[element.fieldType] ? components[element.fieldType]() : null;
+}
 
-export default FormField;
+export default FormField

@@ -1,7 +1,13 @@
 import { db } from "@/db";
-import { forms, formSubmissions, answers as dbAnswers } from "@/db/schema";
+import {
+  forms,
+  formSubmissions,
+  answers as dbAnswers,
+} from "@/db/schema";
 
-export async function POST(request: Request): Promise<Response> {
+export async function POST(
+  request: Request
+): Promise<Response> {
   const data = await request.json();
 
   const newFormSubmission = await db
@@ -12,7 +18,8 @@ export async function POST(request: Request): Promise<Response> {
     .returning({
       insertedId: formSubmissions.id,
     });
-  const [{ insertedId }] = newFormSubmission;
+  const [{ insertedId }] =
+    newFormSubmission;
 
   await db.transaction(async (tx) => {
     for (const answer of data.answers) {
@@ -28,5 +35,8 @@ export async function POST(request: Request): Promise<Response> {
     }
   });
 
-  return Response.json({ formSubmissionsId: insertedId }, { status: 200 });
+  return Response.json(
+    { formSubmissionsId: insertedId },
+    { status: 200 }
+  );
 }

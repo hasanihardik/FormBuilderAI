@@ -1,52 +1,45 @@
-import React from "react";
-import { db } from "@/db";
-import { forms } from "@/db/schema";
-import { eq } from "drizzle-orm";
-import { auth } from "@/auth";
-import Form from "../../Form";
+import React from 'react'
+import { db } from '@/db';
+import { forms } from '@/db/schema';
+import { eq } from 'drizzle-orm';
+import { auth } from '@/auth';
+import Form from '../../Form';
 
-type Props = {};
 
-const page = async ({
-  params,
-}: {
+const page = async ({ params }: {
   params: {
-    formId: string;
-  };
+    formId: string
+  }
 }) => {
   const formId = params.formId;
 
-  if (!formId || formId == null) {
-    return <div>Form not Found!</div>;
-  }
+  if (!formId) {
+    return <div>Form not found</div>
+  };
 
   const session = await auth();
   const userId = session?.user?.id;
-
   const form = await db.query.forms.findFirst({
-    where: eq(forms.formID, formId),
+    where: eq(forms.id, parseInt(formId)),
     with: {
       questions: {
         with: {
-          fieldOptions: true,
-        },
-      },
-    },
-  });
-
-  if (!form) {
-    return <div>Form not found</div>;
-  }
+          fieldOptions: true
+        }
+      }
+    }
+  })
 
   if (userId !== form?.userId) {
-    return <div>You are not authorized to edit this form!</div>;
+    return <div>You are not authorized to view this page</div>
+  }
+
+  if (!form) {
+    return <div>Form not found</div>
   }
 
   return (
-    <div>
-      <Form form={form} editMode={true} />
-    </div>
-  );
-};
-
+    <Form form={form} editMode={true} />
+  )
+}
 export default page;

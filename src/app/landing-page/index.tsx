@@ -1,78 +1,68 @@
-"use client";
+import React from 'react'
+import Image from 'next/image'
+import FormGenerator from '../form-generator'
+import PlausibleProvider from 'next-plausible'
 
-import React from "react";
-import Image from "next/image";
-import FormGenerator from "../form-generator";
-import { BackgroundBeams } from "@/components/ui/background-beams";
-import { StickyScrollReveal } from "@/components/Step";
+type Props = {}
 
-type Props = {};
-
-const LandingPage: React.FC<Props> = (props) => {
+const LandingPage = (props: Props) => {
   return (
-    <div>
-      <BackgroundBeams />
-      <section className="flex flex-col items-center justify-center space-y-4 pt-4 sm:pt-24 w-full">
-        <h1 className="text-3xl text-center tracking-tighter sm:text-3xl md:text-6xl leading-6">
-          Say goodbye to form-building headaches! <br />
-        </h1>
-        <p className="max-w-[600px] mt-4 text-center text-gray-500 md:text-xl sm:text-sm">
-          Generate, publish, and share your forms with the power of AI. Explore
-          insightful results, charts, and analytics effortlessly.
+    <PlausibleProvider domain={process.env.PLAUSIBLE_DOMAIN || ""}>
+      <section className="flex flex-col items-center justify-center space-y-4 pt-4 sm:pt-24 w-full bg-[url('/grid.svg')]" id="hero">
+        <h1 className='text-4xl font-bold text-center tracking-tighter sm:text-5xl md:text-6xl leading-6'>Craft your forms <br></br>quickly, not laboriously.</h1>
+        <p className='max-w-[600px] mt-4 text-center text-gray-500 md:textl-xl'>
+          Empower your form creation with AI for rapid generation, seamless publishing, and effortless sharing. Uncover rich insights and analytics with ease.
         </p>
         <FormGenerator />
-        <div className="w-full h-24"></div>
+        <div className='w-full bg-gradient-to-b from-transparent to-white h-24'></div>
       </section>
-      
-      {/* <StickyScrollReveal /> */}
-      {/* <div className="flex flex-col gap-4 m-auto">
-        <div className="flex items-center flex-col md:flex-row lg:flex-row">
-          <div className="w-[80%] mb-4">
-            <h1 className="text-4xl mb-4">Add a prompt</h1>
-            Add a prompt to your form, providing detailed instructions or
-            requirements for users filling out the form.
-          </div>
-          <div>
-            <Image src="/s1.png" alt="Step 1" width={400} height={400} />
-          </div>
-        </div>
+      <section className='flex flex-col items-center justify-center space-y-4 mt-12 pb-24' id="features">
+        <h2 className='text-3xl font-bold text-center tracking-tighter sm:text-4xl md:text-5xl'>How It Works</h2>
+        <ul className='grid gap-4 grid-cols-1 md:gridcols-2 lg:grid-cols-3 w-full max-w-5xl text-center'>
+          <li className='flex flex-col items-center space-y-4 relative'>
+            <Image
+              src="/images/app/demo1.png"
+              width="250"
+              height="250"
+              alt="create a form"
+              className='bg-white p-4 shadow-sm border rounded-md'
+            />
+            <Image src="/arrow.svg"
+              width="125"
+              height="125"
+              alt="arrow"
+              className="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2" />
+            <p>1. Add a prompt and describe the requirements for your form.</p>
+          </li>
+          <li className='flex flex-col items-center space-y-4 relative'>
+            <Image
+              src="/images/app/demo2.png"
+              width="250"
+              height="250"
+              alt="update the form"
+              className='bg-white p-4 shadow-sm border rounded-md'
+            />
+            <Image src="/arrow.svg"
+              width="125"
+              height="125"
+              alt="arrow"
+              className="absolute top-1/2 right-0 transform translate-x-1/2 -translate-y-1/2 scale-x-[-1] rotate-180" />
+            <p>2. Generate the form.</p>
+          </li>
+          <li className='flex flex-col items-center space-y-4 relative'>
+            <Image
+              src="/images/app/demo4.png"
+              width="250"
+              height="250"
+              alt="check the analytics"
+              className='bg-white p-4 shadow-sm border rounded-md'
+            />
+            <p>3. Check results, analytics and more.</p>
+          </li>
+        </ul>
+      </section>
+    </PlausibleProvider>
+  )
+}
 
-        <div className="flex items-center flex-col md:flex-row lg:flex-row">
-          <div className="w-[80%] mb-4">
-            <h1 className="text-4xl mb-4">Generate the form</h1>
-            Once you've added the prompt, You will get form, that can include
-            various input fields, checkboxes, or other elements depending on the
-            information you need to collect
-          </div>
-          <div>
-            <Image src="/s2.png" alt="Step 1" width={400} height={400} />
-          </div>
-        </div>
-
-        <div className="flex items-center flex-col md:flex-row lg:flex-row">
-          <div className="w-[80%] mb-4">
-            <h1 className="text-4xl mb-4">Generate more fields</h1>
-            You can generate more fields by clicking on "Generate more fields."
-          </div>
-          <div>
-            <Image src="/s4.png" alt="Step 1" width={400} height={400} />
-          </div>
-        </div>
-
-        <div className="flex items-center flex-col md:flex-row lg:flex-row">
-          <div className="w-[80%] mb-4">
-            <h1 className="text-4xl mb-4">Generate the form</h1>
-            Once you've added the prompt, You will get form, that can include
-            various input fields, checkboxes, or other elements depending on the
-            information you need to collect
-          </div>
-          <div>
-            <Image src="/s1.png" alt="Step 1" width={400} height={400} />
-          </div>
-        </div>
-      </div> */}
-    </div>
-  );
-};
-
-export default LandingPage;
+export default LandingPage
