@@ -7,6 +7,6 @@ export default {
   dbCredentials: {
     connectionString:
       process.env.DATABASE_URL ||
-      "postgres://postgres:postgres@localhost:5432/postgres",
+      "process.env.DATABASE_URL",
   },
 } satisfies Config;
