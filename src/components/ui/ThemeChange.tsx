@@ -101,14 +101,7 @@ export function ThemeChange() {
               <span className="w-3 h-3 rounded-full bg-red-900 mr-4"></span>
               Red
             </MenubarRadioItem>
-            <MenubarRadioItem value="orange">
-              <span className="w-3 h-3 rounded-full bg-orange-900 mr-4"></span>
-              Orange
-            </MenubarRadioItem>
-            <MenubarRadioItem value="blue">
-              <span className="w-3 h-3 rounded-full bg-blue-900 mr-4"></span>
-              Blue
-            </MenubarRadioItem>
+            <MenubarRadioItem value="orange" />
             <MenubarRadioItem value="violet">
               <span className="w-3 h-3 rounded-full bg-violet-900 mr-4"></span>
               Violet
